@@ -1,26 +1,46 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import Navbar from './components/Navbar';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import Main from './pages/main/Main';
+import View from './pages/view/View';
+import Error404 from './pages/errors/error404';
+import { Container, CssBaseline, ThemeProvider } from '@mui/material';
+import { theme } from './theme/theme';
+import EnhancedTable from './pages/test';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface MainSectionProps {
+    children: React.ReactNode;
 }
+
+const MainSection = ({ children }: MainSectionProps) => (
+    <Container sx={{ paddingTop: '80px' }}>
+        <div style={{ padding: '0 24px' }}>
+            {children}
+        </div>
+    </Container>
+);
+
+const App = () => {
+
+
+
+    return (
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <BrowserRouter>
+                <Navbar />
+                <MainSection>
+                    <Routes>
+                        <Route path="/" element={<Navigate to='/main' replace />} />
+                        <Route path="/main" element={<Main />} />
+                        <Route path="/view" element={<View />} />
+                        <Route path="/test" element={<EnhancedTable />} />
+                        <Route path="*" element={<Error404 />} />
+                    </Routes>
+                </MainSection>
+            </BrowserRouter>
+        </ThemeProvider>
+    );
+};
 
 export default App;
