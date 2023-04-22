@@ -1,6 +1,8 @@
 import { Edit, Delete } from '@mui/icons-material';
 import { Box, Button, Checkbox, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, IconButton } from '@mui/material';
 import React, { useState, useEffect, useCallback } from 'react';
+import { Confirmation } from '../../../components/modals/Confirmation';
+import { AddRow } from '../../../components/modals/AddRow';
 
 interface Data {
     id: number;
@@ -45,6 +47,12 @@ const DataTable = () => {
     const [rowsPerPage, setRowsPerPage] = useState<number>(5); // potem zmień na 10
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [selectedRows, setSelectedRows] = useState<number[]>([]);
+    const [rowToDelete, setRowToDelete] = useState<number | null>(null);
+    
+    const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState<boolean>(false);
+    const [isConfirmDeleteMultiModalOpen, setIsConfirmDeleteMultiModalOpen] = useState<boolean>(false);
+    const [isAddRowModalOpen, setIsAddRowModalOpen] = useState<boolean>(false);
+
 
     useEffect(() => {
         const rowsToShow = tableRows.slice(0, 5);
@@ -98,21 +106,40 @@ const DataTable = () => {
         setCurrentRows(updatedTableRows);
     }
 
-    const handleSingleRowDelete = (id: number) => {
-        const newTableData = tableData.filter((row) => row.id !== id);
-        if (selectedRows.includes(id)) {
-            const newSelected = selectedRows.filter(selectedID => selectedID !== id);
-            setSelectedRows(newSelected);
+    const showConfirmationDeleteModal = (id: number | null) =>  {
+        if (id !== null) {
+            setRowToDelete(id);
+            setIsConfirmDeleteModalOpen(true);
         }
-
-        setTableData(newTableData);
-        updateRowsOnDelete(newTableData);
+    }
+    const showConfirmationMassDeleteModal = () => {
+        setIsConfirmDeleteMultiModalOpen(true);
+    }
+    const showAddRowModal = () => {
+        setIsAddRowModalOpen(true);
     }
 
-    const handleMassRowDelete = (e: React.MouseEvent<unknown>) => {
+    const handleSingleRowDelete = (id: number | null) => {
+        if (id !== null) {
+            const newTableData = tableData.filter((row) => row.id !== id);
+            if (selectedRows.includes(id)) {
+                const newSelected = selectedRows.filter(selectedID => selectedID !== id);
+                setSelectedRows(newSelected);
+            }
+    
+            setIsConfirmDeleteModalOpen(false);
+            setRowToDelete(null);
+            setTableData(newTableData);
+            updateRowsOnDelete(newTableData);
+        }
+    }
+
+    const handleMassRowDelete = () => {
         if (selectedRows.length === 0) return;
         let newTableData = tableData.filter(row => !selectedRows.includes(row.id));
 
+        setIsConfirmDeleteMultiModalOpen(false);
+        setSelectedRows([]);
         setTableData(newTableData);
         updateRowsOnDelete(newTableData);
     }
@@ -127,24 +154,54 @@ const DataTable = () => {
         setSelectedRows(newSelected);
     }
 
-    console.log(currentPage, currentRows);
+    const handleAddRow = () => {
+        console.log('here youre adding redux dispatch');
+    }
 
     return (
         <>
             <Box>
+                <Confirmation
+                    open={isConfirmDeleteModalOpen}
+                    title="Delete Item"
+                    message="Are you sure you want to delete this item?"
+                    confirmText='Yes, delete it!'
+                    cancelText='No, cancel!'
+                    onCancel={() => setIsConfirmDeleteModalOpen(false)}
+                    onConfirm={() => handleSingleRowDelete(rowToDelete)}
+                />
+                <Confirmation 
+                    open={isConfirmDeleteMultiModalOpen}
+                    title='Delete selected rows?'
+                    message='Are you sure you want to delete all selected rows?'
+                    confirmText='Yes, delete them!'
+                    cancelText='No, cancel!'
+                    onCancel={() => setIsConfirmDeleteMultiModalOpen(false)}
+                    onConfirm={handleMassRowDelete}
+                />
+                <AddRow
+                    open={isAddRowModalOpen}
+                    title='Add new row'
+                    confirmText='Add row'
+                    cancelText='Cancel'
+                    onCancel={() => setIsAddRowModalOpen(false)}
+                    onConfirm={handleAddRow}
+                />
                 <Paper>
                     <TableContainer>
                         <Table sx={{ maxWidth: '1200px' }}>
                             <TableHead>
                                 <TableRow>
                                     <TableCell padding='checkbox'>
-                                        <Checkbox />
+                                        <Tooltip title='Select all rows.' arrow>
+                                            <Checkbox />
+                                        </Tooltip>
                                     </TableCell>
                                     <TableCell>Name</TableCell>
                                     <TableCell>Age</TableCell>
                                     <TableCell>Born date</TableCell>
                                     <TableCell>Biography</TableCell>
-                                    <TableCell>Actions</TableCell>
+                                    <TableCell align='right'>Actions</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -176,33 +233,29 @@ const DataTable = () => {
                                                         : row.biography
                                                     }
                                                 </TableCell>
-                                                <TableCell sx={{ width: '210px' }}>
-                                                    <Grid container spacing={1}>
-                                                        <Grid item>
-                                                            <IconButton sx={{
-                                                                backgroundColor: 'buttons.blue',
-                                                                color: '#fff',
-                                                                borderRadius: '3px',
-                                                                '&:hover': {
-                                                                    backgroundColor: 'buttons.blueHover',
-                                                                }
-                                                            }}>
-                                                                <Edit />
-                                                            </IconButton>
-                                                        </Grid>
-                                                        <Grid item>
-                                                            <IconButton onClick={() => handleSingleRowDelete(row.id)} sx={{
-                                                                backgroundColor: 'buttons.red',
-                                                                color: '#fff',
-                                                                borderRadius: '3px',
-                                                                '&:hover': {
-                                                                    backgroundColor: 'buttons.redHover',
-                                                                }
-                                                            }}>
-                                                                <Delete />
-                                                            </IconButton>
-                                                        </Grid>
-                                                    </Grid>
+                                                <TableCell sx={{ maxWidth: '210px' }} align='right'>
+                                                    <Box display='flex' gap={1} justifyContent='right'>
+                                                        <IconButton sx={{
+                                                            backgroundColor: 'buttons.blue',
+                                                            color: '#fff',
+                                                            borderRadius: '3px',
+                                                            '&:hover': {
+                                                                backgroundColor: 'buttons.blueHover',
+                                                            }
+                                                        }}>
+                                                            <Edit />
+                                                        </IconButton>
+                                                        <IconButton onClick={() => showConfirmationDeleteModal(row.id)} sx={{
+                                                            backgroundColor: 'buttons.red',
+                                                            color: '#fff',
+                                                            borderRadius: '3px',
+                                                            '&:hover': {
+                                                                backgroundColor: 'buttons.redHover',
+                                                            }
+                                                        }}>
+                                                            <Delete />
+                                                        </IconButton>
+                                                    </Box>
                                                 </TableCell>
                                             </TableRow>
                                         );
@@ -217,18 +270,14 @@ const DataTable = () => {
                                         <TableCell sx={{ width: '125px' }}>-</TableCell>
                                         <TableCell>-</TableCell>
                                         <TableCell sx={{ width: '210px' }}>
-                                            <Grid container spacing={1}>
-                                                <Grid item>
-                                                    <IconButton disabled>
-                                                        <Edit />
-                                                    </IconButton>
-                                                </Grid>
-                                                <Grid item>
-                                                    <IconButton disabled>
-                                                        <Delete />
-                                                    </IconButton>
-                                                </Grid>
-                                            </Grid>
+                                            <Box display='flex' gap={1} justifyContent='right'>
+                                                <IconButton disabled>
+                                                    <Edit />
+                                                </IconButton>
+                                                <IconButton disabled>
+                                                    <Delete />
+                                                </IconButton>
+                                            </Box>
                                         </TableCell>
                                     </TableRow>
                                 }
@@ -250,18 +299,27 @@ const DataTable = () => {
                     justifyContent: 'flex-end',
                     gap: '10px'
                 }}>
-                    <Button variant='contained' onClick={(e) => handleMassRowDelete(e)} sx={{
-                        backgroundColor: 'buttons.red',
-                        '&:hover': {
-                            backgroundColor: 'buttons.redHover',
-                        }
-                    }}>Delete selected</Button>
-                    <Button variant='contained' sx={{
-                        backgroundColor: 'buttons.green',
-                        '&:hover': {
-                            backgroundColor: 'buttons.greenHover',
-                        }
-                    }}>Add new</Button>
+                    <Button 
+                        variant='contained' 
+                        disabled={selectedRows.length > 0 ? false : true} 
+                        onClick={showConfirmationMassDeleteModal} 
+                        sx={{
+                            backgroundColor: 'buttons.red',
+                            '&:hover': {
+                                backgroundColor: 'buttons.redHover',
+                            }
+                        }}
+                    >Delete selected</Button>
+                    <Button 
+                        variant='contained'
+                        onClick={showAddRowModal} 
+                        sx={{
+                            backgroundColor: 'buttons.green',
+                            '&:hover': {
+                                backgroundColor: 'buttons.greenHover',
+                            }
+                        }}
+                    >Add new</Button>
                 </Box>
             </Box>
         </>
