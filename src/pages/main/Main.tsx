@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, Grid, Box } from '@mui/material';
+import { Box } from '@mui/material';
 import DataTable from './components/Table';
 
 const Main = () => {
 
 
     return (
-        <Box marginTop={5}>
+        <Box>
             <DataTable />
         </Box>
     );

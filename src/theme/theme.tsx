@@ -10,6 +10,9 @@ const lightPalette = {
     background: {
         default: '#fff',
     },
+    text: {
+        primary: '#010',
+    },
     buttons: {
         red: '#ef123e',
         redHover: '#b6233e',

@@ -1,0 +1,37 @@
+.dv-table {
+  max-width: 1200px;
+}
+
+.dv-tableRow td:nth-child(2) {
+  width: 100px;
+}
+.dv-tableRow td:nth-child(3) {
+  width: 75px;
+}
+.dv-tableRow td:nth-child(4) {
+  width: 125px;
+}
+.dv-tableRow td:nth-child(6) {
+  width: 120px;
+}
+.dv-tableRow td .editButton, .dv-tableRow td .deleteButton {
+  background-color: #1096f6;
+  color: #fff;
+  border-radius: 3px;
+}
+.dv-tableRow td .editButton:hover, .dv-tableRow td .deleteButton:hover {
+  background-color: #1070f6;
+}
+.dv-tableRow td .deleteButton {
+  background-color: #ef123e;
+}
+.dv-tableRow td .deleteButton:hover {
+  background-color: #b6233e;
+}
+
+@media (max-width: 850px) {
+  .dv-table {
+    max-width: unset;
+    min-width: 750px;
+  }
+}

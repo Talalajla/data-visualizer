@@ -2,7 +2,7 @@ import { AddEditRowProps } from '../../types/types';
 import { AddEditTemplate } from './AddEditTemplate';
 
 
-export const AddRow = (props: AddEditRowProps) => {
+export const EditRow = (props: AddEditRowProps) => {
 
     return (
         <AddEditTemplate {...props} />

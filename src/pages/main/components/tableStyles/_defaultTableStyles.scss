@@ -1,0 +1,33 @@
+.dv-table {
+    max-width: 1200px;
+}
+.dv-tableRow {
+    td:nth-child(2) {
+        width: 100px;
+    }   
+    td:nth-child(3) {
+        width: 75px;
+    }
+    td:nth-child(4) {
+        width: 125px;
+    }
+    td:nth-child(6) {
+        width: 120px;
+    }
+    td {
+        .editButton, .deleteButton {
+            background-color: #1096f6;
+            color: #fff;
+            border-radius: 3px;
+            &:hover {
+                background-color: #1070f6;
+            }
+        }
+        .deleteButton {
+            background-color: #ef123e;
+            &:hover {
+                background-color: #b6233e;
+            }
+        }
+    }
+}

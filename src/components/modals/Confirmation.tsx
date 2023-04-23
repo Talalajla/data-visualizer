@@ -1,16 +1,8 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon, IconButton } from '@mui/material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Icon } from '@mui/material';
 import ErrorOutline from "@mui/icons-material/ErrorOutline";
 import { theme } from '../../theme/theme';
+import { ConfirmationProps } from '../../types/types';
 
-interface ConfirmationProps {
-    title: string;
-    message: string;
-    open: boolean;
-    confirmText: string;
-    cancelText: string;
-    onConfirm: () => void;
-    onCancel: () => void;
-}
 
 export const Confirmation = (props: ConfirmationProps) => {
     const { open, title, message, confirmText, cancelText, onConfirm, onCancel } = props;
@@ -21,13 +13,6 @@ export const Confirmation = (props: ConfirmationProps) => {
 
     const handleCancel = () => {
         onCancel();
-
-        // console.log(
-        //     `Name: ${name}\n`,
-        //     `age: ${age}\n`,
-        //     `bornDate: ${bornDate}\n`,
-        //     `bio: ${bio}\n`
-        // )
     }
 
     return (
@@ -36,14 +21,14 @@ export const Confirmation = (props: ConfirmationProps) => {
                 textAlign: 'center'
             }
         }}>
-            <DialogContent sx={{ 
-                display: 'flex', 
-                alignItems: 'center', 
+            <DialogContent sx={{
+                display: 'flex',
+                alignItems: 'center',
                 justifyContent: 'center',
                 paddingTop: '40px'
             }}>
                 <Icon sx={{ width: 75, height: 75 }}>
-                    <ErrorOutline sx={{width: '100%', height: '100%', color: 'buttons.red'}} />
+                    <ErrorOutline sx={{ width: '100%', height: '100%', color: 'buttons.red' }} />
                 </Icon>
             </DialogContent>
             <DialogTitle sx={{
@@ -57,7 +42,7 @@ export const Confirmation = (props: ConfirmationProps) => {
             }}>
                 <DialogContent>{message}</DialogContent>
             </DialogContent>
-            <DialogActions sx={{justifyContent: 'center', paddingBottom: '40px'}}>
+            <DialogActions sx={{ justifyContent: 'center', paddingBottom: '40px' }}>
                 <Box onClick={handleCancel} sx={{
                     padding: '10px 20px',
                     cursor: 'pointer',
