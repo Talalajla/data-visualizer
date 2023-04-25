@@ -1,4 +1,6 @@
 {
+    "errors.404.message": "Oops! This Page Could Not Be Found!",
+    "errors.404.button": "Back to home page",
     "navbar.language.polish": "Polish",
     "navbar.language.english": "English",
     "navbar.pages": "Pages",

@@ -1,4 +1,6 @@
 {
+    "errors.404.message": "Ups! Ta strona nie istnieje!",
+    "errors.404.button": "Wróć do strony głównej",
     "navbar.language.polish": "Język polski",
     "navbar.language.english": "Język angielski",
     "navbar.pages": "Strony",

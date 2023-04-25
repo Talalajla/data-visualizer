@@ -44,8 +44,11 @@ const DataTable = () => {
             currentPage * rowsPerPage + rowsPerPage
         );
 
-        const emptyRows = fillTableWithBlankSpace(rowsPerPage, tableData.length, currentPage + 1);
-        setEmptyRows(emptyRows);
+        // Add empty rows only if all data can't fit in first table page.
+        if (!(currentPage === 0 && tableData.length <= rowsPerPage)) {
+            const emptyRows = countEmptyRows(rowsPerPage, tableData.length, currentPage + 1);
+            setEmptyRows(emptyRows);
+        }
         setCurrentRows(rowsToShow);
     }, [tableData, rowsPerPage, currentPage]);
 
@@ -60,20 +63,12 @@ const DataTable = () => {
         }, [tableData]
     );
 
-    const handleChangePage = useCallback(
-        (e: unknown, newPage: number) => {
-            setCurrentPage(newPage);
+    const handleChangePage = (e: unknown, newPage: number) => setCurrentPage(newPage);
 
-            const emptyRows = fillTableWithBlankSpace(rowsPerPage, tableData.length, newPage + 1);
-            setEmptyRows(emptyRows);
-        },
-        [rowsPerPage, tableData]
-    );
-
-    const fillTableWithBlankSpace = (rows: number, tableLength: number, page: number): number => {
+    const countEmptyRows = (rows: number, tableLength: number, page: number): number => {
         if (rows * page > tableLength) {
-            const countEmptyrows = rows * page - tableLength;
-            return countEmptyrows;
+            const emptyRowsAmount = rows * page - tableLength;
+            return emptyRowsAmount;
         }
         else {
             return 0;
@@ -109,13 +104,14 @@ const DataTable = () => {
     const handleSingleRowDelete = (id: number | null) => {
         if (id !== null) {
             const newTableData = tableData.filter((row) => row.id !== id);
+            
+            // Remove the item from the selected array of items to be deleted when the single delete button is used.
             if (selectedRows.includes(id)) {
-                // Remove the item from the selected array of items to be deleted when the single delete button is used.
                 const newSelected = selectedRows.filter(selectedID => selectedID !== id);
                 setSelectedRows(newSelected);
             }
 
-            dispatch(removeData(id));
+            dispatch(removeData(id)); // Remove single row from store.
 
             setIsConfirmDeleteModalOpen(false);
             setRowToDelete(null);
@@ -128,14 +124,16 @@ const DataTable = () => {
         if (selectedRows.length === 0) return;
         let newTableData = tableData.filter(row => !selectedRows.includes(row.id));
 
-        dispatch(setTableDataStore(newTableData));
+        dispatch(setTableDataStore(newTableData)); // Remove selected rows from store.
+
         setIsConfirmDeleteMultiModalOpen(false);
-        setSelectedRows([]);
+        setSelectedRows([]); // Clean array of items to be deleted.
         setTableData(newTableData);
         updateRowsOnDelete(newTableData);
     }
 
     const handleCheckboxClick = (e: React.MouseEvent<unknown>, selectedId: number) => {
+        // Select clicked row for mass removal.
         let newSelected = [];
         if (selectedRows.includes(selectedId)) {
             newSelected = selectedRows.filter(id => id !== selectedId);
@@ -145,6 +143,7 @@ const DataTable = () => {
         setSelectedRows(newSelected);
     }
     const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // Select all available rows for mass removal.
         if (e.target.checked) {
             const selectedArr: number[] = [];
             tableData.forEach(row => selectedArr.push(row.id));
@@ -156,8 +155,9 @@ const DataTable = () => {
     }
 
     const addNewRow = (data: TableData) => {
-        setTableData([...tableData, data]); // add data to state
-        dispatch(addData(data)); // add data to store
+        setTableData([...tableData, data]); // Add new row to data state.
+        
+        dispatch(addData(data)); // Add new row to store.
 
         setEmptyRows(0);
         setIdCounter(idCounter + 1);
@@ -165,11 +165,10 @@ const DataTable = () => {
     }
 
     const editRow = (data: TableData) => {
-        console.log('Edytujemy: ', data);
         const updatedData = tableData.map((row) => row.id === data.id ? data : row);
         setTableData(updatedData);
 
-        dispatch(updateData(data));
+        dispatch(updateData(data)); // Replace edited row in store.
         setIsEditRowModalOpen(false);
     }
 
@@ -318,7 +317,7 @@ const DataTable = () => {
                                     emptyRows > 0 &&
                                     <TableRow
                                         sx={{
-                                            height: 73 * emptyRows
+                                            height: Math.round(72.7 * emptyRows)
                                         }}
                                     >
 
@@ -341,7 +340,13 @@ const DataTable = () => {
                 <Box marginTop={3} sx={{
                     display: 'flex',
                     justifyContent: 'flex-end',
-                    gap: '10px'
+                    gap: '10px',
+                    '@media(max-width: 500px)': {
+                        flexWrap: 'wrap',
+                        'button': {
+                            width: '100%',
+                        }
+                    }
                 }}>
                     <Button
                         variant='contained'

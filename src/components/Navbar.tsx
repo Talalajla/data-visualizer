@@ -10,6 +10,7 @@ const CustomList = styled(List)({
     height: '100%',
     backgroundColor: theme.palette.background.default,
     padding: '0 40px',
+    minWidth: '200px',
 
     'a': {
         textDecoration: 'none',
@@ -22,7 +23,23 @@ const CustomList = styled(List)({
     },
     '.list-title span': {
         fontWeight: 500
-    }
+    },
+    '.list-mobileLang span' : {
+        cursor: 'pointer',
+        padding: '5px 10px',
+        borderRadius: '10px',
+        '&.selected': {
+            background: 'rgb(0 0 0 / .1)',
+        }
+    },
+    '.mobileLinkButton': {
+        cursor: 'pointer',
+        padding: '5px 10px',
+        borderRadius: '10px',
+        '&.selected': {
+            background: 'rgb(0 0 0 / .1)',
+        }
+    },
 });
 
 const Navbar = () => {
@@ -42,7 +59,6 @@ const Navbar = () => {
         i18n.changeLanguage(lang);
         setOpenDrawer(false)
     }
-
 
     return (
         <AppBar>
@@ -93,23 +109,27 @@ const Navbar = () => {
                             <Divider />
                             <ListItem onClick={() => setOpenDrawer(false)}>
                                 <ListItemText>
-                                    <Link to='/main' >{t('navbar.main')}</Link>
+                                    <span className={`mobileLinkButton ${window.location.pathname === '/main' ? 'selected' : ''}`}>
+                                        <Link to='/main' >{t('navbar.main')}</Link>
+                                    </span>
                                 </ListItemText>
                             </ListItem>
                             <ListItem onClick={() => setOpenDrawer(false)}>
                                 <ListItemText>
-                                    <Link to='/views'>{t('navbar.view')}</Link>
+                                    <span className={`mobileLinkButton ${window.location.pathname === '/views' ? 'selected' : ''}`}>
+                                        <Link to='/views'>{t('navbar.views')}</Link>
+                                    </span>
                                 </ListItemText>
                             </ListItem>
                             <Divider />
                             <ListItem className='list-title'>
                                 <span>{t('navbar.language')}</span>
                             </ListItem>
-                            <ListItem onClick={() => handleLanguageClick('pl')}>
-                                <span role='img' aria-label='Polish' style={{ cursor: 'pointer' }}>🇵🇱 PL</span>
+                            <ListItem className='list-mobileLang' onClick={() => handleLanguageClick('pl')}>
+                                <span className={`${language === 'pl' ? 'selected' : ''}`} role='img' aria-label='Polish'>🇵🇱 PL</span>
                             </ListItem>
-                            <ListItem onClick={() => handleLanguageClick('en')}>
-                                <span role='img' aria-label='English' style={{ cursor: 'pointer' }}>🇬🇧 ENG</span>
+                            <ListItem className='list-mobileLang' onClick={() => handleLanguageClick('en')}>
+                                <span className={`${language === 'en' ? 'selected' : ''}`}  role='img' aria-label='English'>🇬🇧 ENG</span>
                             </ListItem>
                         </CustomList>
                     </Drawer>
